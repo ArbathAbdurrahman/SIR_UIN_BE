@@ -1,0 +1,62 @@
+# 1. Ignore file Python yang tidak diperlukan
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+*.pyo
+
+# 2. Ignore database lokal
+db.sqlite3
+*.db
+*.sqlite3
+
+# 3. Ignore virtual environment
+venv/
+env/
+*.log
+
+# 4. Ignore file konfigurasi yang bersifat pribadi
+.env
+teknohole-public.pem
+*.env
+config/settings/local.py  # Jika menggunakan pemisahan settings
+config/settings/dev.py  # Jika ada setting khusus untuk development
+
+# 5. Ignore cache dan file sementara
+*.swp
+*.swo
+*.DS_Store
+*.bak
+*.~*
+*.tmp
+Thumbs.db
+
+# 6. Ignore file dari editor
+.vscode/
+.idea/
+*.iml
+
+# 7. Ignore file terkait Django Migrations yang dapat menimbulkan konflik
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# 8. Ignore file media yang diunggah user (opsional, kecuali ingin menyimpan di repo)
+media/
+
+# 9. Ignore file statis hasil collectstatic (jangan commit hasilnya)
+staticfiles/
+static/
+
+# 10. Ignore file dependency jika menggunakan pipenv atau poetry
+Pipfile
+Pipfile.lock
+poetry.lock
+
+# 11. Ignore file coverage dan testing
+.coverage
+htmlcov/
+pytest_cache/
+nosetests.xml
+test-results.xml
+
+sdk/
