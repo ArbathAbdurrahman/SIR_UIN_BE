@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from .views import *
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.conf.urls.static import static
@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/register', RegistrationView.as_view(), name='register'),
     path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/reset-password', ResetPasswordView.as_view(), name='reset_password'),
+    path('api/', include('ruang.urls')),
 
     # Dokumentasi Swagger & Redoc
     path('api/doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
