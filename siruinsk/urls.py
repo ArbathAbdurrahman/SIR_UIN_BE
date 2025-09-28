@@ -9,6 +9,7 @@ from rest_framework.authentication import SessionAuthentication
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from utils.permissions import IsSwaggerAllowed
+from django.views.generic import TemplateView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -23,6 +24,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path('', TemplateView.as_view(template_name='index.html')),
     path('admin/', admin.site.urls),
     path('api/login', LoginView.as_view(), name='login'),
     path('api/logout', LogoutView.as_view(), name='logout'),
