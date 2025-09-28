@@ -27,32 +27,44 @@ class RoomFilter(django_filters.FilterSet):
     location = django_filters.CharFilter(field_name='location__name', lookup_expr='icontains')
     min_capacity = django_filters.NumberFilter(field_name='capacity', lookup_expr='gte')
     max_capacity = django_filters.NumberFilter(field_name='capacity', lookup_expr='lte')
-    available_from = django_filters.DateTimeFilter(method='filter_available_from')
-    available_to = django_filters.DateTimeFilter(method='filter_available_to')
+    available_from = django_filters.DateTimeFilter(method='filter_availability')
+    available_to = django_filters.DateTimeFilter(method='filter_availability')
     
     class Meta:
         model = Room
         fields = ['location', 'capacity']
     
-    def filter_available_from(self, queryset, name, value):
-        # Filter room yang tidak ada reservasi yang approved pada waktu tersebut
-        if hasattr(self, '_available_to') or 'available_to' in self.data:
-            available_to = self._available_to if hasattr(self, '_available_to') else self.data.get('available_to')
-            if available_to:
+    def filter_availability(self, queryset, name, value):
+        # Hanya filter jika kedua available_from dan available_to ada
+        available_from = self.data.get('available_from')
+        available_to = self.data.get('available_to')
+        
+        if available_from and available_to:
+            try:
+                from datetime import datetime
+                # Parse datetime jika berupa string
+                if isinstance(available_from, str):
+                    start_dt = datetime.fromisoformat(available_from.replace('Z', '+00:00'))
+                else:
+                    start_dt = available_from
+                    
+                if isinstance(available_to, str):
+                    end_dt = datetime.fromisoformat(available_to.replace('Z', '+00:00'))
+                else:
+                    end_dt = available_to
+                
                 # Exclude rooms yang punya reservasi approved yang overlap dengan waktu yang diminta
                 conflicting_reservations = Reservation.objects.filter(
                     status='APPROVED',
-                    start__lt=available_to,
-                    end__gt=value
+                    start__lt=end_dt,
+                    end__gt=start_dt
                 ).values_list('room_id', flat=True)
+                
                 queryset = queryset.exclude(id__in=conflicting_reservations)
+            except (ValueError, TypeError):
+                # Jika ada error parsing datetime, return queryset tanpa filter
+                pass
         
-        self._available_from = value
-        return queryset
-    
-    def filter_available_to(self, queryset, name, value):
-        # Simpan nilai untuk digunakan di filter_available_from
-        self._available_to = value
         return queryset
 
 

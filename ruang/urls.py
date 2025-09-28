@@ -32,7 +32,17 @@ urlpatterns = [
 # GET         /api/feedback/my_feedback/      - User's own feedback
 
 # Contoh filter parameters:
-# /api/rooms/?location=Building A&min_capacity=10&max_capacity=50
-# /api/rooms/?available_from=2023-12-01T09:00:00Z&available_to=2023-12-01T17:00:00Z
-# /api/reservations/?status=APPROVED&room__location=1
-# /api/feedback/?rating=5&reservation__room__location=1
+# Filter berdasarkan lokasi dan kapasitas
+# GET /api/rooms/?location=Building A&min_capacity=10&max_capacity=50
+
+# Filter availability saja
+# GET /api/rooms/?available_from=2023-12-01T09:00:00Z&available_to=2023-12-01T17:00:00Z
+
+# Kombinasi semua filter (seperti yang Anda minta)
+# GET /api/rooms/?location=Building A&min_capacity=10&max_capacity=50&available_from=2023-12-01T09:00:00Z&available_to=2023-12-01T17:00:00Z
+
+# Filter berdasarkan capacity saja
+# GET /api/rooms/?min_capacity=20
+
+# Filter berdasarkan lokasi saja (case-insensitive)
+# GET /api/rooms/?location=building
