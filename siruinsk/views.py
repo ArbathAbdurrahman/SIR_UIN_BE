@@ -39,11 +39,19 @@ class LoginView(APIView):
         if user_authenticated is not None:
             refresh = RefreshToken.for_user(user_authenticated)
             user_serializer = UserSerializer(user_authenticated)
+            role = {
+                'role':'user'
+            }
+            if user.is_staff:
+                admin = {
+                    'role':'admin'
+                }
+                role.update(admin)
 
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
-                'user': user_serializer.data
+                'user': user_serializer.data | role,
             })
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 

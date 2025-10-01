@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models import Avg, Sum
 
 class Location(models.Model):
     name = models.CharField(max_length=100)
@@ -14,6 +15,20 @@ class Room(models.Model):
     name = models.CharField(max_length=100)
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     capacity = models.PositiveIntegerField(default=0)
+
+    def get_average_rating(self):
+        """
+        Menghitung rata-rata rating dari semua feedback terkait.
+        Mengembalikan 0 jika belum ada feedback.
+        """
+        # Menghitung rata-rata rating menggunakan agregasi database
+        avg_dict = Feedback.objects.filter(reservation__room=self).aggregate(average=Avg('rating'))
+        average = avg_dict.get('average')
+
+        if average is None:
+            return 0.0
+        
+        return round(average,2)
 
     def __str__(self):
         return f"{self.name} ({self.location.name})"

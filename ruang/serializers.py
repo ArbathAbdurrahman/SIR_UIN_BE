@@ -11,10 +11,14 @@ class LocationSerializer(serializers.ModelSerializer):
 
 class RoomSerializer(serializers.ModelSerializer):
     location_name = serializers.CharField(source='location.name', read_only=True)
-    
+    rating = serializers.SerializerMethodField()
+
     class Meta:
         model = Room
-        fields = ['id', 'name', 'location', 'location_name', 'capacity']
+        fields = ['id', 'name', 'location', 'location_name', 'capacity', 'rating']
+
+    def get_rating(self, obj):
+        return obj.get_average_rating()
 
 
 class UserSerializer(serializers.ModelSerializer):
