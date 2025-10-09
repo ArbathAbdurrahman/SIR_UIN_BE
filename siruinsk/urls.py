@@ -32,6 +32,7 @@ urlpatterns = [
     path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/reset-password', ResetPasswordView.as_view(), name='reset_password'),
     path('api/', include('ruang.urls')),
+    path('api/profile/', include('profil.urls')),
 
     # Dokumentasi Swagger & Redoc
     path('api/doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

@@ -28,6 +28,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'siruinsk',
+    'profil',
     'ruang',
 ]
 

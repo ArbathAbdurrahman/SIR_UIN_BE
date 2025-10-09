@@ -37,8 +37,6 @@ Thumbs.db
 *.iml
 
 # 7. Ignore file terkait Django Migrations yang dapat menimbulkan konflik
-**/migrations/*.py
-!**/migrations/__init__.py
 
 # 8. Ignore file media yang diunggah user (opsional, kecuali ingin menyimpan di repo)
 media/
