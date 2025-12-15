@@ -6,6 +6,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as django_filters
 from django.db.models import Q
 from datetime import datetime
+from django.utils.dateparse import parse_datetime
+from django.utils.timezone import is_naive, make_aware
+from django.utils import timezone
 
 from .models import Location, Room, Reservation, Feedback
 from .serializers import (
@@ -78,34 +81,39 @@ class RoomViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['get'])
     def availability(self, request, pk=None):
-        """Check room availability for specific time range"""
         room = self.get_object()
         start_time = request.query_params.get('start')
         end_time = request.query_params.get('end')
-        
+
         if not start_time or not end_time:
             return Response(
-                {'error': 'start and end query parameters are required'}, 
+                {'error': 'start and end query parameters are required'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
-        try:
-            start_dt = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
-            end_dt = datetime.fromisoformat(end_time.replace('Z', '+00:00'))
-        except ValueError:
+
+        start_dt = parse_datetime(start_time)
+        end_dt = parse_datetime(end_time)
+
+        if not start_dt or not end_dt:
             return Response(
-                {'error': 'Invalid datetime format. Use ISO format.'}, 
+                {'error': 'Invalid datetime format. Use ISO format.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
-        # Check for conflicting approved reservations
+
+        # Pastikan timezone-aware (UTC)
+        if is_naive(start_dt):
+            start_dt = make_aware(start_dt, timezone.utc)
+
+        if is_naive(end_dt):
+            end_dt = make_aware(end_dt, timezone.utc)
+
         conflicting = Reservation.objects.filter(
             room=room,
             status='APPROVED',
             start__lt=end_dt,
             end__gt=start_dt
         ).exists()
-        
+
         return Response({
             'room': room.id,
             'available': not conflicting,
