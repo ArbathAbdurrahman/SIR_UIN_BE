@@ -29,13 +29,14 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ReservationSerializer(serializers.ModelSerializer):
     requester_name = serializers.CharField(source='requester.username', read_only=True)
+    requester_email = serializers.CharField(source='requester.email', read_only=True)
     room_name = serializers.CharField(source='room.name', read_only=True)
     location_name = serializers.CharField(source='room.location.name', read_only=True)
     
     class Meta:
         model = Reservation
         fields = [
-            'id', 'requester', 'requester_name', 'room', 'room_name', 
+            'id', 'requester','requester_name', 'requester_email', 'room', 'room_name', 
             'location_name', 'start', 'end', 'purpose', 'requested_capacity',
             'status', 'created_at', 'updated_at'
         ]
